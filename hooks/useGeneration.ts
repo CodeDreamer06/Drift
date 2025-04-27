@@ -43,7 +43,21 @@ export const useGeneration = () => {
 
   // Persist images to localStorage whenever they change
   useEffect(() => {
-    localStorage.setItem(IMAGES_STORAGE_KEY, JSON.stringify(images));
+    // Limit to the most recent 20 images
+    const toStore = images.slice(0, 20);
+    try {
+      localStorage.setItem(IMAGES_STORAGE_KEY, JSON.stringify(toStore));
+    } catch (e) {
+      // If quota exceeded, try storing fewer images
+      for (let n = 15; n > 0; n -= 5) {
+        try {
+          localStorage.setItem(IMAGES_STORAGE_KEY, JSON.stringify(images.slice(0, n)));
+          break;
+        } catch {}
+      }
+      // Optionally notify user (console for now)
+      console.warn('Image history storage quota exceeded. Oldest images were dropped.');
+    }
   }, [images]);
 
   // Cleanup function to revoke blob URLs

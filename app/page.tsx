@@ -46,7 +46,7 @@ function Home() {
   const [temperature, setTemperature] = useLocalStorage<number>("temperature", 0.7);
   
   // API key context
-  const { apiKey } = useApiKey();
+  const { getAvailableKey, isAllLimited, markUsage } = useApiKey();
   
   // Hooks
   const { isLoading, images, generate } = useGeneration();
@@ -54,6 +54,10 @@ function Home() {
   
   // Handle prompt submission
   const handlePromptSubmit = async (prompt: string) => {
+    if (isAllLimited()) {
+      alert('All API keys have reached the 5 requests/minute limit. Please wait or add more keys.');
+      return;
+    }
     // Always use a valid size for the selected model
     let validSize = size;
     const modelId = selectedModel.id;
@@ -67,6 +71,11 @@ function Home() {
       ];
       validSize = allowed.includes(size) ? size : allowed[0];
     }
+    const apiKey = getAvailableKey();
+    if (!apiKey) {
+      alert('No available API key.');
+      return;
+    }
     await generate({
       prompt,
       model: selectedModel.id,
@@ -75,8 +84,9 @@ function Home() {
       n: quantity,
       negativePrompt: negativePrompt || undefined,
       temperature,
-      apiKey: apiKey || undefined // Pass apiKey to the API
+      apiKey
     });
+    markUsage(apiKey);
   };
 
   return (
