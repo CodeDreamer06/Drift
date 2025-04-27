@@ -120,46 +120,46 @@ export default function ImageCard({
         <Button
           size="icon"
           variant="secondary"
-          className="h-8 w-8 rounded-full bg-white/20 backdrop-blur-md hover:bg-white/30 transition-all hover:scale-[0.98] active:scale-95"
+          className="h-8 w-8 rounded-full bg-white/30 border border-black/10 shadow-lg backdrop-blur-md hover:bg-white/40 transition-all hover:scale-[0.98] active:scale-95"
           onClick={() => onZoom(image)}
         >
-          <Maximize2 className="h-4 w-4" />
+          <Maximize2 className="h-4 w-4 text-zinc-700 drop-shadow" />
         </Button>
         <Button
           size="icon"
           variant="secondary"
-          className="h-8 w-8 rounded-full bg-white/20 backdrop-blur-md hover:bg-white/30 transition-all hover:scale-[0.98] active:scale-95"
+          className="h-8 w-8 rounded-full bg-white/30 border border-black/10 shadow-lg backdrop-blur-md hover:bg-white/40 transition-all hover:scale-[0.98] active:scale-95"
           onClick={handleDownload}
         >
-          <Download className="h-4 w-4" />
+          <Download className="h-4 w-4 text-zinc-700 drop-shadow" />
         </Button>
         <Button
           size="icon"
           variant="secondary"
-          className="h-8 w-8 rounded-full bg-white/20 backdrop-blur-md hover:bg-white/30 transition-all hover:scale-[0.98] active:scale-95"
+          className="h-8 w-8 rounded-full bg-white/30 border border-black/10 shadow-lg backdrop-blur-md hover:bg-white/40 transition-all hover:scale-[0.98] active:scale-95"
           onClick={handleCopy}
         >
-          <Copy className="h-4 w-4" />
+          <Copy className="h-4 w-4 text-zinc-700 drop-shadow" />
         </Button>
         <Button
           size="icon"
           variant="secondary"
           className={cn(
-            "h-8 w-8 rounded-full bg-white/20 backdrop-blur-md hover:bg-white/30 transition-all hover:scale-[0.98] active:scale-95",
+            "h-8 w-8 rounded-full bg-white/30 border border-black/10 shadow-lg backdrop-blur-md hover:bg-white/40 transition-all hover:scale-[0.98] active:scale-95",
             isFavorite && "text-yellow-400"
           )}
           onClick={() => onFavorite(image)}
         >
-          <Star className={cn("h-4 w-4", isFavorite && "fill-yellow-400")} />
+          <Star className={cn("h-4 w-4 text-zinc-700 drop-shadow", isFavorite && "fill-yellow-400")} />
         </Button>
         <Button
           size="icon"
           variant="destructive"
-          className="h-8 w-8 rounded-full bg-red-500/80 text-white hover:bg-red-600/90 hover:scale-[0.98] active:scale-95"
+          className="h-8 w-8 rounded-full bg-red-500/80 text-white border border-black/10 shadow-lg hover:bg-red-600/90 hover:scale-[0.98] active:scale-95"
           title="Delete image"
           onClick={() => onDelete(image.id)}
         >
-          <Trash className="h-4 w-4" />
+          <Trash className="h-4 w-4 drop-shadow" />
         </Button>
       </div>
     </div>
