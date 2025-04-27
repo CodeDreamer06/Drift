@@ -153,23 +153,28 @@ export default function SettingsPanel({
         
         <div className="space-y-2">
           <div className="text-xs text-muted-foreground">Quality</div>
-          <Select value={quality} onValueChange={(value) => onQualityChange(value as ImageQuality)}>
-            <SelectTrigger className="w-full transition-all duration-300 ease-in-out hover:border-foreground">
-              <SelectValue placeholder="Select quality" />
-            </SelectTrigger>
-            <SelectContent>
-              {availableQualities.map((qualityOption) => {
-                // Create a more user-friendly label
-                const label = qualityOption.charAt(0).toUpperCase() + qualityOption.slice(1);
-                
-                return (
-                  <SelectItem key={qualityOption} value={qualityOption} className="transition-colors">
-                    {label}
-                  </SelectItem>
-                );
-              })}
-            </SelectContent>
-          </Select>
+          <div className="flex gap-2 my-4">
+            {availableQualities.map((qualityOption) => {
+              const label = qualityOption.charAt(0).toUpperCase() + qualityOption.slice(1);
+              const selected = quality === qualityOption;
+              return (
+                <button
+                  key={qualityOption}
+                  type="button"
+                  onClick={() => onQualityChange(qualityOption)}
+                  className={
+                    `px-4 py-2 rounded-full border transition-colors duration-200 font-medium text-sm focus:outline-none focus:ring-2 focus:ring-offset-2
+                    ${selected
+                      ? 'bg-zinc-900 text-white dark:bg-zinc-100 dark:text-zinc-900 border-zinc-900 dark:border-zinc-100'
+                      : 'bg-zinc-100 text-zinc-800 dark:bg-zinc-800 dark:text-zinc-200 border-transparent hover:bg-zinc-200 dark:hover:bg-zinc-700'}
+                    `
+                  }
+                >
+                  {label}
+                </button>
+              );
+            })}
+          </div>
         </div>
       </CardContent>
     </Card>

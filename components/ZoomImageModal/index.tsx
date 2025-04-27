@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useCallback } from "react";
 import Image from "next/image";
 import { Download, Copy, Star, X } from "lucide-react";
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
@@ -26,7 +26,7 @@ export default function ZoomImageModal({
 }: ZoomImageModalProps) {
   const [isLoading, setIsLoading] = useState(true);
 
-  const handleDownload = async () => {
+  const handleDownload = useCallback(async () => {
     try {
       const response = await fetch(image.url);
       const blob = await response.blob();
@@ -42,9 +42,9 @@ export default function ZoomImageModal({
     } catch {
       toast.error("Failed to download image");
     }
-  };
+  }, [image]);
 
-  const handleCopy = async () => {
+  const handleCopy = useCallback(async () => {
     try {
       const response = await fetch(image.url);
       const blob = await response.blob();
@@ -57,7 +57,29 @@ export default function ZoomImageModal({
     } catch {
       toast.error("Failed to copy image");
     }
-  };
+  }, [image]);
+
+  // F, D, C keyboard shortcuts (only when dialog is open)
+  const handleKeyDown = useCallback((e: KeyboardEvent) => {
+    if (!isOpen) return;
+    if (e.target instanceof HTMLElement && /input|textarea|select/i.test(e.target.tagName)) return;
+    if (e.key === 'f' || e.key === 'F') {
+      e.preventDefault();
+      onToggleFavorite(image);
+    } else if (e.key === 'd' || e.key === 'D') {
+      e.preventDefault();
+      handleDownload();
+    } else if (e.key === 'c' || e.key === 'C') {
+      e.preventDefault();
+      handleCopy();
+    }
+  }, [isOpen, image, onToggleFavorite, handleDownload, handleCopy]);
+
+  useEffect(() => {
+    if (!isOpen) return;
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [isOpen, handleKeyDown]);
 
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>

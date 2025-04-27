@@ -1,6 +1,6 @@
 "use client";
 
-import { Moon, Sun } from "lucide-react";
+import { Moon, Sun, Heart } from "lucide-react";
 import { useTheme } from "@/components/providers";
 import { Button } from "@/components/ui/button";
 import ModelSelector, { Model } from "@/components/ModelSelector";
@@ -23,6 +23,16 @@ export default function Header({ selectedModel, onModelChange }: HeaderProps) {
           </span>
         </div>
         <div className="ml-auto flex items-center gap-2">
+          <a href="/favorites" title="View Favorites">
+            <Button
+              variant="ghost"
+              size="icon"
+              className="text-pink-600 hover:bg-pink-50 dark:hover:bg-zinc-900 transition-all duration-300 ease-in-out"
+            >
+              <Heart className="h-[1.3rem] w-[1.3rem]" />
+              <span className="sr-only">Favorites</span>
+            </Button>
+          </a>
           <ModelSelector 
             selectedModel={selectedModel}
             onModelChange={onModelChange}
