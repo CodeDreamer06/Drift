@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Image from "next/image";
-import { Download, Copy, Star, Maximize2 } from "lucide-react";
+import { Download, Copy, Star, Maximize2, Trash } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
@@ -22,6 +22,7 @@ interface ImageCardProps {
   onFavorite: (image: ImageData) => void;
   isFavorite?: boolean;
   onZoom: (image: ImageData) => void;
+  onDelete: (id: string) => void;
 }
 
 export default function ImageCard({
@@ -29,6 +30,7 @@ export default function ImageCard({
   onFavorite,
   isFavorite = false,
   onZoom,
+  onDelete,
 }: ImageCardProps) {
   const [isLoading, setIsLoading] = useState(true);
   const [isHovered, setIsHovered] = useState(false);
@@ -149,6 +151,15 @@ export default function ImageCard({
           onClick={() => onFavorite(image)}
         >
           <Star className={cn("h-4 w-4", isFavorite && "fill-yellow-400")} />
+        </Button>
+        <Button
+          size="icon"
+          variant="destructive"
+          className="h-8 w-8 rounded-full bg-red-500/80 text-white hover:bg-red-600/90 hover:scale-[0.98] active:scale-95"
+          title="Delete image"
+          onClick={() => onDelete(image.id)}
+        >
+          <Trash className="h-4 w-4" />
         </Button>
       </div>
     </div>

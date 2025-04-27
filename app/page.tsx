@@ -49,8 +49,13 @@ function Home() {
   const { getAvailableKey, isAllLimited, markUsage } = useApiKey();
   
   // Hooks
-  const { isLoading, images, generate } = useGeneration();
+  const { isLoading, images, setImages, generate } = useGeneration();
   const { favorites, toggleFavorite } = useFavorites();
+  
+  // Delete image handler
+  const handleDeleteImage = (id: string) => {
+    setImages(images.filter(img => img.id !== id));
+  };
   
   // Handle prompt submission
   const handlePromptSubmit = async (prompt: string) => {
@@ -130,6 +135,7 @@ function Home() {
             images={images} 
             favorites={favorites} 
             onToggleFavorite={toggleFavorite}
+            onDelete={handleDeleteImage}
           />
         </div>
       </main>

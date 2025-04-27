@@ -9,12 +9,14 @@ interface ImageGridProps {
   images: ImageData[];
   favorites: string[];
   onToggleFavorite: (image: ImageData) => void;
+  onDelete: (id: string) => void;
 }
 
 export default function ImageGrid({ 
   images, 
   favorites,
   onToggleFavorite,
+  onDelete,
 }: ImageGridProps) {
   const [zoomedImage, setZoomedImage] = useState<ImageData | null>(null);
 
@@ -39,6 +41,7 @@ export default function ImageGrid({
                 isFavorite={favorites.includes(image.id)}
                 onFavorite={onToggleFavorite}
                 onZoom={setZoomedImage}
+                onDelete={onDelete}
               />
             </div>
           ))
