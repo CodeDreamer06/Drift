@@ -80,13 +80,14 @@ function Home() {
   };
 
   return (
-    <div className="flex flex-col min-h-screen">
+    <div className="flex flex-col min-h-screen bg-gray-50 dark:bg-black">
       <Header 
         selectedModel={selectedModel} 
         onModelChange={setSelectedModel} 
       />
-      <main className="flex flex-1 overflow-hidden">
-        <div className="w-96 border-r p-4 overflow-y-auto flex-shrink-0 transition-all duration-300 ease-in-out">
+      <main className="flex flex-1 flex-col md:flex-row overflow-hidden">
+        {/* Sidebar: stacks on top on mobile, left on desktop */}
+        <div className="w-full md:w-96 border-b md:border-b-0 md:border-r p-4 overflow-y-auto flex-shrink-0 transition-all duration-300 ease-in-out">
           <div className="space-y-6">
             <PromptInput 
               onSubmit={handlePromptSubmit} 
@@ -113,7 +114,8 @@ function Home() {
             </div>
           </div>
         </div>
-        <div className="flex-1 p-4 overflow-y-auto">
+        {/* Main Content: below sidebar on mobile, right on desktop */}
+        <div className="flex-1 p-2 sm:p-4 overflow-y-auto">
           <ImageGrid 
             images={images} 
             favorites={favorites} 

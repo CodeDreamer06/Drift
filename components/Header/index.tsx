@@ -17,8 +17,8 @@ export default function Header({ selectedModel, onModelChange }: HeaderProps) {
     <header className="border-b">
       <div className="flex h-16 items-center px-4 sm:px-6">
         <div className="flex items-center gap-2">
-          <h1 className="text-xl font-bold">Drift</h1>
-          <span className="text-xs bg-zinc-100 dark:bg-zinc-800 px-2 py-1 rounded-full">
+          <h1 className="text-xl font-bold text-zinc-900 dark:text-zinc-100">Drift</h1>
+          <span className="text-xs bg-zinc-100 text-zinc-700 dark:bg-zinc-800 dark:text-zinc-200 px-2 py-1 rounded-full">
             AI Image Generation
           </span>
         </div>
@@ -30,7 +30,7 @@ export default function Header({ selectedModel, onModelChange }: HeaderProps) {
           <Button
             variant="outline"
             size="icon"
-            className="transition-all duration-300 ease-in-out hover:text-zinc-900 dark:hover:text-zinc-50"
+            className="bg-white dark:bg-zinc-900 text-black dark:text-white border border-gray-200 dark:border-zinc-800 transition-all duration-300 ease-in-out hover:text-zinc-900 dark:hover:text-zinc-50"
             onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
           >
             {theme === "dark" ? (

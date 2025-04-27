@@ -137,7 +137,11 @@ export default function SettingsPanel({
                 variant={quantity === num ? "default" : "outline"}
                 size="sm"
                 onClick={() => onQuantityChange(num)}
-                className="flex-1 transition-all duration-300 ease-in-out hover:scale-[0.98] active:scale-95"
+                className={
+                  quantity === num
+                    ? "flex-1 bg-zinc-900 text-white dark:bg-zinc-200 dark:text-black border border-zinc-900 dark:border-zinc-200 transition-all duration-300 ease-in-out hover:scale-[0.98] active:scale-95"
+                    : "flex-1 bg-white text-black border border-zinc-300 dark:bg-zinc-900 dark:text-white dark:border-zinc-700 transition-all duration-300 ease-in-out hover:scale-[0.98] active:scale-95"
+                }
               >
                 {num}
               </Button>

@@ -49,7 +49,7 @@ export default function AdvancedOptions({
         <div className="overflow-hidden min-h-0">
           <div className="space-y-4">
             <div className="space-y-2">
-              <div className="text-xs text-muted-foreground">Temperature ({temperature.toFixed(1)})</div>
+              <div className="text-xs text-zinc-700 dark:text-zinc-200">Temperature ({temperature.toFixed(1)})</div>
               <Slider 
                 value={[temperature]} 
                 min={0.1} 
@@ -63,12 +63,12 @@ export default function AdvancedOptions({
             <Separator />
             
             <div className="space-y-2">
-              <div className="text-xs text-muted-foreground">Negative Prompt</div>
+              <div className="text-xs text-zinc-700 dark:text-zinc-200">Negative Prompt</div>
               <textarea
                 value={negativPrompt}
                 onChange={(e) => onNegativePromptChange(e.target.value)}
                 placeholder="Things to exclude from the generated image..."
-                className="w-full resize-none rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 transition-all duration-300 ease-in-out min-h-[80px]"
+                className="w-full resize-none rounded-md border-none bg-zinc-100 text-zinc-900 dark:bg-zinc-800 dark:text-zinc-100 px-3 py-2 text-sm placeholder-zinc-400 dark:placeholder-zinc-500 ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 transition-all duration-300 ease-in-out min-h-[80px]"
               />
             </div>
           </div>

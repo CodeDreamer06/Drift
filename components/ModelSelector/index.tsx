@@ -22,6 +22,7 @@ export type Model = {
   owned_by?: string;
   supportedSizes?: string[];
   supportedQualities?: string[];
+  disabled?: boolean;
 };
 
 export const models: Model[] = [
@@ -226,12 +227,14 @@ export default function ModelSelector({
             variant="outline"
             role="combobox"
             aria-expanded={open}
-            className="w-[240px] justify-between transition-all duration-300 ease-in-out"
+            aria-label="Select model"
+            className="w-[220px] justify-between bg-white dark:bg-zinc-900 text-black dark:text-white border border-gray-200 dark:border-zinc-800 transition-colors"
+            onClick={() => setOpen(!open)}
           >
-            <div className="flex items-center gap-2 text-sm">
+            <span className="flex items-center gap-2">
               <Wand2 className="h-4 w-4" />
               {selectedModel.name}
-            </div>
+            </span>
             <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
           </Button>
         </PopoverTrigger>
@@ -249,20 +252,39 @@ export default function ModelSelector({
                       onModelChange(model);
                       setOpen(false);
                     }}
-                    className="transition-all duration-300 ease-in-out"
+                    disabled={model.disabled}
+                    className={cn(
+                      "transition-all duration-300 ease-in-out",
+                      selectedModel.id === model.id
+                        ? "bg-zinc-100 dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 font-semibold"
+                        : model.disabled
+                        ? "text-zinc-400 dark:text-zinc-600"
+                        : "text-zinc-700 dark:text-zinc-200"
+                    )}
                   >
-                    <Check
-                      className={cn(
-                        "mr-2 h-4 w-4",
+                    <div className="flex items-center gap-2">
+                      <Wand2 className={cn(
+                        "h-4 w-4",
                         selectedModel.id === model.id
-                          ? "opacity-100"
-                          : "opacity-0"
-                      )}
-                    />
-                    <div className="flex flex-col">
+                          ? "text-zinc-900 dark:text-zinc-100"
+                          : model.disabled
+                          ? "text-zinc-400 dark:text-zinc-600"
+                          : "text-zinc-700 dark:text-zinc-200"
+                      )} />
                       <span>{model.name}</span>
-                      <span className="text-xs text-muted-foreground">{model.description}</span>
                     </div>
+                    <span
+                      className={cn(
+                        "ml-auto text-xs",
+                        selectedModel.id === model.id
+                          ? "text-zinc-900 dark:text-zinc-100"
+                          : model.disabled
+                          ? "text-zinc-400 dark:text-zinc-600"
+                          : "text-zinc-500 dark:text-zinc-400"
+                      )}
+                    >
+                      {selectedModel.id === model.id && <Check className="h-4 w-4" />}
+                    </span>
                   </CommandItem>
                 ))}
               </CommandGroup>
@@ -283,13 +305,37 @@ export default function ModelSelector({
                   onModelChange(model);
                   setCommandOpen(false);
                 }}
-                className="transition-all duration-300 ease-in-out"
+                disabled={model.disabled}
+                className={cn(
+                  "transition-all duration-300 ease-in-out",
+                  selectedModel.id === model.id
+                    ? "bg-zinc-100 dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 font-semibold"
+                    : model.disabled
+                    ? "text-zinc-400 dark:text-zinc-600"
+                    : "text-zinc-700 dark:text-zinc-200"
+                )}
               >
                 <div className="flex items-center gap-2">
-                  <Wand2 className="h-4 w-4" />
+                  <Wand2 className={cn(
+                    "h-4 w-4",
+                    selectedModel.id === model.id
+                      ? "text-zinc-900 dark:text-zinc-100"
+                      : model.disabled
+                      ? "text-zinc-400 dark:text-zinc-600"
+                      : "text-zinc-700 dark:text-zinc-200"
+                  )} />
                   <span>{model.name}</span>
                 </div>
-                <span className="ml-auto text-xs text-muted-foreground">
+                <span
+                  className={cn(
+                    "ml-auto text-xs",
+                    selectedModel.id === model.id
+                      ? "text-zinc-900 dark:text-zinc-100"
+                      : model.disabled
+                      ? "text-zinc-400 dark:text-zinc-600"
+                      : "text-zinc-500 dark:text-zinc-400"
+                  )}
+                >
                   {selectedModel.id === model.id && <Check className="h-4 w-4" />}
                 </span>
               </CommandItem>

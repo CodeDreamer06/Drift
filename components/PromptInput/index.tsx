@@ -57,8 +57,8 @@ export default function PromptInput({
     <div className="rounded-md border bg-card p-4 animate-in">
       <div className="space-y-4">
         <div className="flex items-center justify-between">
-          <h3 className="text-sm font-medium">Prompt</h3>
-          <div className="text-xs text-muted-foreground">Press / to focus</div>
+          <h3 className="text-sm font-medium text-zinc-700 dark:text-zinc-200">Prompt</h3>
+          <div className="text-xs text-zinc-400 dark:text-zinc-500">Press / to focus</div>
         </div>
         <Textarea
           ref={textareaRef}
@@ -67,14 +67,15 @@ export default function PromptInput({
           onKeyDown={handleKeyDown}
           placeholder="Describe the image you want to generate..."
           rows={1}
-          className="resize-none transition-all duration-300 ease-in-out min-h-[80px]"
+          className="resize-none transition-all duration-300 ease-in-out min-h-[80px] text-zinc-900 dark:text-zinc-100 placeholder-zinc-400 dark:placeholder-zinc-500"
         />
         <Button
           onClick={handleSubmit}
           disabled={!prompt.trim() || isLoading}
           className={cn(
-            "w-full transition-all duration-300 ease-in-out",
-            isLoading ? "animate-pulse-slow" : "hover:scale-[0.98] active:scale-95"
+            "w-full transition-all duration-300 ease-in-out bg-zinc-900 text-white dark:bg-zinc-200 dark:text-black",
+            isLoading ? "animate-pulse-slow" : "hover:scale-[0.98] active:scale-95",
+            (!prompt.trim() || isLoading) && "opacity-60 cursor-not-allowed"
           )}
         >
           {isLoading ? (
