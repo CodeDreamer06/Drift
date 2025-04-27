@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Image from "next/image";
-import { Download, Copy, Star, Maximize2, Trash } from "lucide-react";
+import { Download, Copy, Star, Trash } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
@@ -70,9 +70,15 @@ export default function ImageCard({
 
   return (
     <div 
-      className="relative aspect-square rounded-md overflow-hidden group"
+      className="relative aspect-square rounded-md overflow-hidden group cursor-pointer"
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
+      onClick={e => {
+        // Only trigger zoom if not clicking on a button
+        if (!(e.target instanceof HTMLElement && e.target.closest('button'))) {
+          onZoom(image);
+        }
+      }}
     >
       <div 
         className={cn(
@@ -84,6 +90,7 @@ export default function ImageCard({
         src={image.url}
         alt={image.prompt}
         fill
+        draggable={false}
         className={cn(
           "object-cover transition-all duration-300 ease-in-out animate-fadeIn",
           isHovered ? "scale-105" : "scale-100",
@@ -117,14 +124,6 @@ export default function ImageCard({
           isHovered ? "translate-x-0 opacity-100" : "translate-x-2 opacity-0"
         )}
       >
-        <Button
-          size="icon"
-          variant="secondary"
-          className="h-8 w-8 rounded-full bg-white/30 border border-black/10 shadow-lg backdrop-blur-md hover:bg-white/40 transition-all hover:scale-[0.98] active:scale-95"
-          onClick={() => onZoom(image)}
-        >
-          <Maximize2 className="h-4 w-4 text-zinc-700 drop-shadow" />
-        </Button>
         <Button
           size="icon"
           variant="secondary"
