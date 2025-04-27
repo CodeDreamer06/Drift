@@ -50,7 +50,7 @@ export default function ApiKeySettings() {
           {apiKeys.length === 0 && (
             <div className="text-xs text-zinc-400">No API keys added.</div>
           )}
-          {apiKeys.map(({ key }, idx) => (
+          {apiKeys.map(({ key }) => (
             <div key={key} className="flex items-center gap-2">
               <Input
                 type="text"
