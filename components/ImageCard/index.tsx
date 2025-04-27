@@ -13,6 +13,8 @@ export interface ImageData {
   prompt: string;
   model: string;
   createdAt: string;
+  // Only for GPT Image 1: store base64 if available for persistent caching
+  b64?: string;
 }
 
 interface ImageCardProps {

@@ -16,7 +16,27 @@ export const useGeneration = () => {
     const stored = localStorage.getItem(IMAGES_STORAGE_KEY);
     if (stored) {
       try {
-        setImages(JSON.parse(stored));
+        const parsed: ImageData[] = JSON.parse(stored);
+        // For GPT Image 1 images, reconstruct blob URLs if b64 is present
+        const hydrated = parsed.map(img => {
+          if (
+            img.model === "gpt-image-1" &&
+            img.b64
+          ) {
+            // Always recreate blob URL from base64
+            const byteString = atob(img.b64);
+            const arrayBuffer = new ArrayBuffer(byteString.length);
+            const uint8Array = new Uint8Array(arrayBuffer);
+            for (let i = 0; i < byteString.length; i++) {
+              uint8Array[i] = byteString.charCodeAt(i);
+            }
+            const blob = new Blob([arrayBuffer], { type: 'image/png' });
+            const url = URL.createObjectURL(blob);
+            return { ...img, url };
+          }
+          return img;
+        });
+        setImages(hydrated);
       } catch {}
     }
   }, []);
@@ -53,6 +73,8 @@ export const useGeneration = () => {
           prompt: request.prompt,
           model: request.model,
           createdAt: now,
+          // For GPT Image 1, persist base64 for future restoration
+          ...(request.model === "gpt-image-1" && item.b64_json ? { b64: item.b64_json } : {})
         }));
       
       updateImages([...newImages, ...images]);
