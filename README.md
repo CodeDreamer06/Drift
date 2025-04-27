@@ -1,36 +1,83 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Drift - AI Image Generation
 
-## Getting Started
+Drift is a modern, beautiful, and fast AI image generation app built with Next.js, React, and Tailwind CSS. It provides a seamless experience for generating, managing, and organizing AI-generated images with advanced features and delightful UI/UX.
 
-First, run the development server:
+---
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+## ✨ Features
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+- **Multi-Model Support:**
+  - Generate images using multiple AI models (e.g., Stable Diffusion, DALL·E, GPT Image, and more).
+  - Model selection with smart size/quality adaptation.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+- **Image Management:**
+  - Gallery grid with smooth animations and responsive design.
+  - Zoom/expand images in a dialog by clicking the image.
+  - Download, copy, favorite, and delete images easily.
+  - LocalStorage-based storage (last 20 images, with quota handling).
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+- **Favorites System:**
+  - Heart icon in the header opens a dedicated Favorites page (`/favorites`).
+  - Favorite/unfavorite images from anywhere (gallery or dialog).
+  - Keyboard shortcut: **Shift + F** to open Favorites instantly.
 
-## Learn More
+- **API Key Management:**
+  - Add, remove, and rotate multiple API keys.
+  - Usage tracking and auto-rotation to avoid rate limits.
 
-To learn more about Next.js, take a look at the following resources:
+- **Settings & Customization:**
+  - Pill-style selectors for image quality (dark/light mode friendly).
+  - Quantity selector, advanced prompt options, and model-aware size selection.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+- **Keyboard Shortcuts:**
+  - Submit/generate: `Ctrl + Enter` (or `⌘ + Enter` on Mac)
+  - Open shortcuts dialog: `Shift + ?`
+  - Open Favorites: `Shift + F`
+  - In image dialog: `F` (favorite), `D` (download), `C` (copy)
+  - More: tab navigation, model picker, etc. (see in-app dialog)
+  - Mac users see native symbols (⌘, ⌥, ⇧, etc.)
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+- **Modern UI/UX:**
+  - Glassy, blurred action buttons with strong contrast on any background.
+  - Fully responsive, accessible, and theme-aware (dark/light mode).
+  - Toast notifications for actions (download, copy, errors, etc.)
 
-## Deploy on Vercel
+---
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## 🚀 Getting Started
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+1. **Install dependencies:**
+   ```bash
+   npm install
+   # or yarn, pnpm, bun
+   ```
+2. **Run the dev server:**
+   ```bash
+   npm run dev
+   ```
+3. **Open [http://localhost:3000](http://localhost:3000) in your browser.**
+
+---
+
+## 🛠️ Tech Stack
+- Next.js (App Router)
+- React
+- Tailwind CSS
+- Lucide Icons
+- LocalStorage (with option for IndexedDB)
+
+---
+
+## 📄 License
+MIT
+
+---
+
+## 🙏 Credits
+- [Next.js](https://nextjs.org)
+- [Lucide Icons](https://lucide.dev)
+- [Sonner](https://sonner.emilkowal.ski/) for toasts
+
+---
+
+Enjoy generating and managing your AI images with Drift!
