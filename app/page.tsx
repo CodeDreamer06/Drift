@@ -49,12 +49,12 @@ function Home() {
   const { getAvailableKey, isAllLimited, markUsage } = useApiKey();
   
   // Hooks
-  const { isLoading, images, setImages, generate } = useGeneration();
+  const { isLoading, images, generate, removeImage } = useGeneration();
   const { favorites, toggleFavorite } = useFavorites();
   
   // Delete image handler
   const handleDeleteImage = (id: string) => {
-    setImages(images.filter(img => img.id !== id));
+    removeImage(id);
   };
   
   // Handle prompt submission
