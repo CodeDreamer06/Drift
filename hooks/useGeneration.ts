@@ -12,6 +12,23 @@ export const useGeneration = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [images, setImages] = useState<ImageData[]>([]);
 
+  // Helper: hydrate blob URLs from base64
+  const hydrateImages = (imgs: ImageData[]): ImageData[] =>
+    imgs.map(img => {
+      if (img.model === "gpt-image-1" && img.b64) {
+        const byteString = atob(img.b64);
+        const arrayBuffer = new ArrayBuffer(byteString.length);
+        const uint8Array = new Uint8Array(arrayBuffer);
+        for (let i = 0; i < byteString.length; i++) {
+          uint8Array[i] = byteString.charCodeAt(i);
+        }
+        const blob = new Blob([arrayBuffer], { type: 'image/png' });
+        const url = URL.createObjectURL(blob);
+        return { ...img, url };
+      }
+      return img;
+    });
+
   // Load images from IndexedDB on mount, migrate from localStorage if needed
   useEffect(() => {
     let didCancel = false;
@@ -28,7 +45,8 @@ export const useGeneration = () => {
       // Load from IndexedDB
       try {
         const all = await getAllImages();
-        if (!didCancel) setImages(all.sort((a, b) => (b.createdAt || '').localeCompare(a.createdAt || '')));
+        const hydrated = hydrateImages(all);
+        if (!didCancel) setImages(hydrated.sort((a, b) => (b.createdAt || '').localeCompare(a.createdAt || '')));
       } catch {}
     };
     load();
@@ -54,14 +72,16 @@ export const useGeneration = () => {
   const addNewImages = async (newImages: ImageData[]) => {
     await addImages(newImages);
     const all = await getAllImages();
-    updateImages(all.sort((a, b) => (b.createdAt || '').localeCompare(a.createdAt || '')));
+    const hydrated = hydrateImages(all);
+    updateImages(hydrated.sort((a, b) => (b.createdAt || '').localeCompare(a.createdAt || '')));
   };
 
   // Delete image from IndexedDB and state
   const removeImage = async (id: string) => {
     await deleteImage(id);
     const all = await getAllImages();
-    updateImages(all.sort((a, b) => (b.createdAt || '').localeCompare(a.createdAt || '')));
+    const hydrated = hydrateImages(all);
+    updateImages(hydrated.sort((a, b) => (b.createdAt || '').localeCompare(a.createdAt || '')));
   };
 
   const generate = async (request: GenerationRequest) => {
