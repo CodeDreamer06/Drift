@@ -40,6 +40,7 @@ const shortcuts = [
   { key: "Ctrl + Enter", description: "Submit / Generate images" },
   { key: "Tab", description: "Navigate fields" },
   { key: "1, 2, 3, 4", description: "Select number of outputs" },
+  { key: "q, w, e, r", description: "Change image quality (q=first, w=second, etc.)" },
   { key: "Arrow → / ←", description: "Switch models" },
   { key: "/ (slash key)", description: "Focus prompt instantly" },
   { key: "Ctrl + K", description: "Open model picker" },

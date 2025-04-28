@@ -71,20 +71,27 @@ export default function SettingsPanel({
     }
   }, [selectedModel, availableQualities, quality, onQualityChange]);
   
-  // Keyboard shortcuts for quantity
+  // Keyboard shortcuts for quantity and quality
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.ctrlKey || e.metaKey || e.altKey || e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement) return;
-      
+      // Quantity shortcuts
       if (["1", "2", "3", "4"].includes(e.key)) {
         e.preventDefault();
         onQuantityChange(parseInt(e.key));
+        return;
+      }
+      // Quality shortcuts (q, w, e, r)
+      const keys = ["q", "w", "e", "r"];
+      const idx = keys.indexOf(e.key.toLowerCase());
+      if (idx !== -1 && idx < availableQualities.length) {
+        e.preventDefault();
+        onQualityChange(availableQualities[idx]);
       }
     };
-    
     document.addEventListener("keydown", handleKeyDown);
     return () => document.removeEventListener("keydown", handleKeyDown);
-  }, [onQuantityChange]);
+  }, [onQuantityChange, onQualityChange, availableQualities]);
 
   return (
     <Card className="animate-in">
