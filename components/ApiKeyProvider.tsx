@@ -5,17 +5,19 @@ import React, { createContext, useContext, useState, useEffect, ReactNode } from
 interface ApiKey {
   key: string;
   usage: number[]; // timestamps (ms) of requests in the last minute
+  rpm?: number; // requests per minute, default 5
 }
 
 interface ApiKeyContextType {
   apiKeys: ApiKey[];
-  addApiKey: (key: string) => void;
+  addApiKey: (key: string, rpm?: number) => void;
   removeApiKey: (key: string) => void;
   getAvailableKey: () => string | null;
   getUsage: (key: string) => number;
   isAllLimited: () => boolean;
   clearAllKeys: () => void;
   markUsage: (key: string) => void;
+  setRpm: (key: string, rpm: number) => void;
 }
 
 const ApiKeyContext = createContext<ApiKeyContextType | undefined>(undefined);
@@ -42,10 +44,10 @@ export function ApiKeyProvider({ children }: { children: ReactNode }) {
   }, [apiKeys]);
 
   // Add a new API key
-  const addApiKey = (key: string) => {
+  const addApiKey = (key: string, rpm: number = MAX_RPM) => {
     setApiKeys(prev => {
       if (prev.find(k => k.key === key)) return prev;
-      return [...prev, { key, usage: [] }];
+      return [...prev, { key, usage: [], rpm }];
     });
   };
 
@@ -68,8 +70,8 @@ export function ApiKeyProvider({ children }: { children: ReactNode }) {
   // Get the next available key for rotation
   const getAvailableKey = () => {
     const now = Date.now();
-    // Filter out keys that are at or above 5RPM
-    const available = apiKeys.filter(k => k.usage.filter(ts => now - ts < 60_000).length < MAX_RPM);
+    // Filter out keys that are at or above their rpm (default 5)
+    const available = apiKeys.filter(k => k.usage.filter(ts => now - ts < 60_000).length < (k.rpm || MAX_RPM));
     if (available.length === 0) return null;
     // Rotate: pick the one with the least recent usage
     available.sort((a, b) => {
@@ -83,7 +85,7 @@ export function ApiKeyProvider({ children }: { children: ReactNode }) {
   // Check if all keys are limited
   const isAllLimited = () => {
     const now = Date.now();
-    return apiKeys.length > 0 && apiKeys.every(k => k.usage.filter(ts => now - ts < 60_000).length >= MAX_RPM);
+    return apiKeys.length > 0 && apiKeys.every(k => k.usage.filter(ts => now - ts < 60_000).length >= (k.rpm || MAX_RPM));
   };
 
   // Mark usage for a key (should be called after a successful request)
@@ -97,8 +99,13 @@ export function ApiKeyProvider({ children }: { children: ReactNode }) {
     }));
   };
 
+  // Set RPM for a key
+  const setRpm = (key: string, rpm: number) => {
+    setApiKeys(prev => prev.map(k => k.key === key ? { ...k, rpm } : k));
+  };
+
   return (
-    <ApiKeyContext.Provider value={{ apiKeys, addApiKey, removeApiKey, getAvailableKey, getUsage, isAllLimited, clearAllKeys, markUsage }}>
+    <ApiKeyContext.Provider value={{ apiKeys, addApiKey, removeApiKey, getAvailableKey, getUsage, isAllLimited, clearAllKeys, markUsage, setRpm }}>
       {children}
     </ApiKeyContext.Provider>
   );

@@ -8,11 +8,14 @@ import { useApiKey } from "@/components/ApiKeyProvider";
 export default function ApiKeySettings() {
   const { apiKeys, addApiKey, removeApiKey, getUsage, clearAllKeys } = useApiKey();
   const [input, setInput] = useState("");
+  const [rpmInputs, setRpmInputs] = useState<{ [key: string]: string }>({});
 
   const handleAdd = () => {
     if (input.trim()) {
-      addApiKey(input.trim());
+      const rpm = parseInt(rpmInputs[input.trim()]) || 5;
+      addApiKey(input.trim(), rpm);
       setInput("");
+      setRpmInputs(prev => ({ ...prev, [input.trim()]: "" }));
     }
   };
 
@@ -29,6 +32,14 @@ export default function ApiKeySettings() {
             onChange={e => setInput(e.target.value)}
             placeholder="Enter new API key"
             className="flex-1 bg-zinc-100 text-zinc-700 dark:bg-zinc-800 dark:text-zinc-200 border-none"
+          />
+          <Input
+            type="number"
+            min={1}
+            value={rpmInputs[input] !== undefined ? rpmInputs[input] : 5}
+            onChange={e => setRpmInputs(prev => ({ ...prev, [input]: e.target.value }))}
+            className="w-16 bg-zinc-100 text-zinc-700 dark:bg-zinc-800 dark:text-zinc-200 border-none text-xs px-1"
+            placeholder="RPM"
           />
           <Button 
             onClick={handleAdd} 
@@ -50,7 +61,7 @@ export default function ApiKeySettings() {
           {apiKeys.length === 0 && (
             <div className="text-xs text-zinc-400">No API keys added.</div>
           )}
-          {apiKeys.map(({ key }) => (
+          {apiKeys.map(({ key, rpm }) => (
             <div key={key} className="flex items-center gap-2">
               <Input
                 type="text"
@@ -59,7 +70,7 @@ export default function ApiKeySettings() {
                 className="flex-1 bg-zinc-100 text-zinc-700 dark:bg-zinc-800 dark:text-zinc-200 border-none"
                 placeholder="API key"
               />
-              <span className="text-xs text-zinc-400">{getUsage(key)}/5 RPM</span>
+              <span className="text-xs text-zinc-400">{getUsage(key)}/{rpm || 5} RPM</span>
               <Button 
                 variant="secondary" 
                 onClick={() => removeApiKey(key)}
