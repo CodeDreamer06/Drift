@@ -35,7 +35,7 @@ export default function ImageGrid({
           </div>
         ) : (
           images.map((image) => (
-            <div key={image.id} className="animate-fadeIn" style={{ animationDelay: `${Math.random() * 0.3}s` }}>
+            <div key={image.id}>
               <ImageCard 
                 image={image}
                 isFavorite={favorites.includes(image.id)}
