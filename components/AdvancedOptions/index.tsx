@@ -6,13 +6,20 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { Slider } from "@/components/ui/slider";
+import { Badge } from "@/components/ui/badge";
+import { Label } from "@/components/ui/label";
 import { cn } from "@/lib/utils";
+import { CircleDashed, Circle, CircleSlash2 } from "lucide-react";
+import { Model } from "@/components/ModelSelector";
 
 interface AdvancedOptionsProps {
   negativPrompt: string;
   onNegativePromptChange: (prompt: string) => void;
   temperature: number;
   onTemperatureChange: (temp: number) => void;
+  selectedModel: Model;
+  backgroundSetting: 'auto' | 'opaque' | 'transparent';
+  onBackgroundSettingChange: (value: 'auto' | 'opaque' | 'transparent') => void;
 }
 
 export default function AdvancedOptions({
@@ -20,6 +27,9 @@ export default function AdvancedOptions({
   onNegativePromptChange,
   temperature,
   onTemperatureChange,
+  selectedModel,
+  backgroundSetting,
+  onBackgroundSettingChange
 }: AdvancedOptionsProps) {
   const [isExpanded, setIsExpanded] = useState(false);
 
@@ -71,9 +81,31 @@ export default function AdvancedOptions({
                 className="w-full resize-none rounded-md border-none bg-zinc-100 text-zinc-900 dark:bg-zinc-800 dark:text-zinc-100 px-3 py-2 text-sm placeholder-zinc-400 dark:placeholder-zinc-500 ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 transition-all duration-300 ease-in-out min-h-[80px]"
               />
             </div>
+
+            {/* Background Setting - Only for gpt-image-1 */}
+            {selectedModel.id === 'gpt-image-1' && (
+              <div className="space-y-2 pt-4">
+                <Label htmlFor="background-setting">Background</Label>
+                <div id="background-setting" className="flex gap-2 pt-1 flex-wrap">
+                  {(['auto', 'opaque', 'transparent'] as const).map((option) => (
+                    <Badge
+                      key={option}
+                      variant={backgroundSetting === option ? 'default' : 'secondary'}
+                      onClick={() => onBackgroundSettingChange(option)}
+                      className="cursor-pointer px-3 py-1 text-sm flex items-center gap-1.5"
+                    >
+                      {option === 'auto' && <CircleDashed className="h-3.5 w-3.5" />}
+                      {option === 'opaque' && <Circle className="h-3.5 w-3.5" />}
+                      {option === 'transparent' && <CircleSlash2 className="h-3.5 w-3.5" />}
+                      {option.charAt(0).toUpperCase() + option.slice(1)} {/* Capitalize */} 
+                    </Badge>
+                  ))}
+                </div>
+              </div>
+            )}
           </div>
         </div>
       </CardContent>
     </Card>
   );
-} 
+}

@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { v4 as uuidv4 } from "uuid";
-import { generateImages, GenerationRequest } from "@/lib/api";
+import { generateImages, GenerationRequest, editImages, EditRequest } from "@/lib/api";
 import { ImageData } from "@/components/ImageCard";
 import { getAllImages, addImages, deleteImage } from "@/lib/db";
 
@@ -11,6 +11,7 @@ const IMAGES_STORAGE_KEY = "drift-images";
 export const useGeneration = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [images, setImages] = useState<ImageData[]>([]);
+  const [sourceImages, setSourceImages] = useState<File[]>([]);
 
   // Helper: hydrate blob URLs from base64
   const hydrateImages = (imgs: ImageData[]): ImageData[] =>
@@ -84,6 +85,21 @@ export const useGeneration = () => {
     updateImages(hydrated.sort((a, b) => (b.createdAt || '').localeCompare(a.createdAt || '')));
   };
 
+  // === Source Image Management ===
+  const addSourceImage = (file: File) => {
+    // Optional: Add checks for file type, size, or duplicates if needed
+    setSourceImages((prev) => [...prev, file]);
+  };
+
+  const removeSourceImage = (fileName: string) => {
+    setSourceImages((prev) => prev.filter((file) => file.name !== fileName));
+  };
+
+  const clearSourceImages = () => {
+    setSourceImages([]);
+  };
+  // ==============================
+
   const generate = async (request: GenerationRequest) => {
     setIsLoading(true);
     try {
@@ -106,11 +122,65 @@ export const useGeneration = () => {
     }
   };
 
+  // Function to handle image editing
+  const edit = async (request: Omit<EditRequest, 'images' | 'apiKey'>) => {
+    if (sourceImages.length === 0) {
+      console.warn("Edit function called without source images.");
+      // Optionally show a toast message to the user
+      return;
+    }
+    setIsLoading(true);
+    try {
+      // Prepare the request for the editImages API call
+      const editApiRequest: EditRequest = {
+        ...request,
+        images: sourceImages,
+        // API key is handled within editImages, fetching from localStorage
+      };
+
+      const response = await editImages(editApiRequest);
+      const now = new Date().toISOString();
+
+      // Process the response - assuming single image edited result based on docs
+      // Adjust if the API can return multiple edited images
+      const newImages: ImageData[] = response.data
+        .filter((item): item is { b64_json: string } & typeof item => typeof item.b64_json === 'string') // Expecting b64_json for edits
+        .map((item) => ({
+          id: uuidv4(),
+          url: '', // Will be hydrated later
+          b64: item.b64_json,
+          prompt: request.prompt, // Use the edit prompt
+          model: request.model, // Use the edit model
+          createdAt: now,
+        }));
+
+      if (newImages.length > 0) {
+        await addNewImages(newImages); // Add the edited image(s)
+        clearSourceImages(); // Clear source images after successful edit
+        return newImages;
+      } else {
+        console.warn("Edit operation did not return usable image data.");
+        // Optionally show a toast message
+      }
+
+    } catch (error) {
+      console.error("Error in useGeneration (edit):", error);
+      // Error toast is likely handled within editImages
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   return {
     isLoading,
     images,
+    sourceImages,
     setImages: updateImages,
     generate,
-    removeImage // Expose for deletion
+    edit,
+    removeImage,
+    addSourceImage,
+    removeSourceImage,
+    clearSourceImages,
   };
 };

@@ -21,6 +21,11 @@ const models: Model[] = [
     description: "OpenAI's latest text-to-image model",
   },
   {
+    id: "gpt-image-1",
+    name: "GPT Image 1",
+    description: "OpenAI model with image editing capabilities",
+  },
+  {
     id: "midjourney",
     name: "Midjourney",
     description: "Highly detailed and artistic images",
@@ -44,54 +49,33 @@ function Home() {
   // Advanced options state
   const [negativePrompt, setNegativePrompt] = useLocalStorage<string>("negativePrompt", "");
   const [temperature, setTemperature] = useLocalStorage<number>("temperature", 0.7);
+  // Background setting state
+  const [backgroundSetting, setBackgroundSetting] = useLocalStorage<'auto' | 'opaque' | 'transparent'>("backgroundSetting", "auto");
   
   // API key context
-  const { getAvailableKey, isAllLimited, markUsage } = useApiKey();
+  const { 
+    // getAvailableKey, // Commented out - unused
+    // isAllLimited, // Commented out - unused
+    // markUsage // Commented out - unused
+  } = useApiKey();
   
-  // Hooks
-  const { isLoading, images, generate, removeImage } = useGeneration();
+  // Generation hook
+  const { 
+    isLoading, 
+    images, 
+    generate, 
+    removeImage, 
+    edit, 
+    addSourceImage, 
+    removeSourceImage, 
+    sourceImages,
+    clearSourceImages
+  } = useGeneration();
   const { favorites, toggleFavorite } = useFavorites();
   
   // Delete image handler
   const handleDeleteImage = (id: string) => {
     removeImage(id);
-  };
-  
-  // Handle prompt submission
-  const handlePromptSubmit = async (prompt: string) => {
-    if (isAllLimited()) {
-      alert('All API keys have reached the 5 requests/minute limit. Please wait or add more keys.');
-      return;
-    }
-    // Always use a valid size for the selected model
-    let validSize = size;
-    const modelId = selectedModel.id;
-    if (modelId === "gpt-image-1") {
-      const allowed = ["1024x1024", "1024x1536", "1536x1024"];
-      validSize = allowed.includes(size) ? size : allowed[0];
-    } else if (modelId.toLowerCase().includes("flux")) {
-      const allowed = [
-        "2752x1536", "1536x2752", "2048x2048", "3136x1344", "2496x1664", "1664x2496",
-        "1856x2304", "2304x1856", "1344x3136"
-      ];
-      validSize = allowed.includes(size) ? size : allowed[0];
-    }
-    const apiKey = getAvailableKey();
-    if (!apiKey) {
-      alert('No available API key.');
-      return;
-    }
-    await generate({
-      prompt,
-      model: selectedModel.id,
-      size: validSize,
-      quality,
-      n: quantity,
-      negativePrompt: negativePrompt || undefined,
-      temperature,
-      apiKey
-    });
-    markUsage(apiKey);
   };
 
   return (
@@ -105,8 +89,19 @@ function Home() {
         <div className="w-full md:w-96 border-b md:border-b-0 md:border-r p-4 overflow-y-auto flex-shrink-0 transition-all duration-300 ease-in-out">
           <div className="space-y-6">
             <PromptInput 
-              onSubmit={handlePromptSubmit} 
+              generate={generate} 
+              edit={edit}
+              addSourceImage={addSourceImage}
+              removeSourceImage={removeSourceImage}
+              sourceImages={sourceImages}
+              clearSourceImages={clearSourceImages}
               isLoading={isLoading} 
+              model={selectedModel.id} 
+              size={size} 
+              quality={quality} 
+              negativePrompt={negativePrompt}
+              temperature={temperature}
+              backgroundSetting={backgroundSetting}
             />
             <ApiKeySettings />
             <SettingsPanel 
@@ -123,6 +118,9 @@ function Home() {
               onNegativePromptChange={setNegativePrompt}
               temperature={temperature}
               onTemperatureChange={setTemperature}
+              selectedModel={selectedModel}
+              backgroundSetting={backgroundSetting}
+              onBackgroundSettingChange={setBackgroundSetting}
             />
             <div className="flex justify-end">
               <KeyboardShortcuts />

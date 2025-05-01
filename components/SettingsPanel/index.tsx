@@ -46,7 +46,7 @@ export default function SettingsPanel({
   onQuantityChange,
   quality,
   onQualityChange,
-  selectedModel,
+  selectedModel
 }: SettingsPanelProps) {
   // For keyboard shortcuts
   // Get available sizes for the current model
@@ -73,19 +73,25 @@ export default function SettingsPanel({
   
   // Keyboard shortcuts for quantity and quality
   useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.ctrlKey || e.metaKey || e.altKey || e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement) return;
-      // Quantity shortcuts
-      if (["1", "2", "3", "4"].includes(e.key)) {
-        e.preventDefault();
-        onQuantityChange(parseInt(e.key));
+    const handleKeyDown = (event: KeyboardEvent) => {
+      // Ignore if modifier keys are pressed or if typing in an input/textarea
+      if (event.metaKey || event.ctrlKey || event.altKey || event.shiftKey || 
+          (event.target instanceof HTMLInputElement) || 
+          (event.target instanceof HTMLTextAreaElement))
+      {
         return;
+      }
+
+      // Check for number keys 1 through 5
+      if (event.key >= '1' && event.key <= '5') {
+        const num = parseInt(event.key, 10);
+        onQuantityChange(num);
       }
       // Quality shortcuts (q, w, e, r)
       const keys = ["q", "w", "e", "r"];
-      const idx = keys.indexOf(e.key.toLowerCase());
+      const idx = keys.indexOf(event.key.toLowerCase());
       if (idx !== -1 && idx < availableQualities.length) {
-        e.preventDefault();
+        event.preventDefault();
         onQualityChange(availableQualities[idx]);
       }
     };
@@ -136,9 +142,9 @@ export default function SettingsPanel({
         <Separator />
         
         <div className="space-y-2">
-          <div className="text-xs text-muted-foreground">Number of Images (press 1-4)</div>
-          <div className="flex gap-2">
-            {[1, 2, 3, 4].map((num) => (
+          <div className="text-xs text-muted-foreground">Number of Images (press 1-5)</div>
+          <div className="flex gap-2 my-4">
+            {Array.from({ length: 5 }, (_, i) => i + 1).map((num) => (
               <Button
                 key={num}
                 variant={quantity === num ? "default" : "outline"}
@@ -146,7 +152,7 @@ export default function SettingsPanel({
                 onClick={() => onQuantityChange(num)}
                 className={
                   quantity === num
-                    ? "flex-1 bg-zinc-900 text-white dark:bg-zinc-200 dark:text-black border border-zinc-900 dark:border-zinc-200 transition-all duration-300 ease-in-out hover:scale-[0.98] active:scale-95"
+                    ? "flex-1 bg-zinc-900 text-white dark:bg-zinc-200 dark:text-zinc-900 border border-zinc-900 dark:border-zinc-200 transition-all duration-300 ease-in-out hover:scale-[0.98] active:scale-95"
                     : "flex-1 bg-white text-black border border-zinc-300 dark:bg-zinc-900 dark:text-white dark:border-zinc-700 transition-all duration-300 ease-in-out hover:scale-[0.98] active:scale-95"
                 }
               >
