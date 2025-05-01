@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef, useEffect, KeyboardEvent, DragEvent } from "react";
+import { useState, useRef, useEffect, KeyboardEvent, DragEvent, ChangeEvent } from "react";
 import { Sparkles, XCircle, UploadCloud } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
@@ -47,6 +47,7 @@ export default function PromptInput({
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const [isDragging, setIsDragging] = useState(false);
   const [previewUrls, setPreviewUrls] = useState<Record<string, string>>({});
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     const newUrls: Record<string, string> = {};
@@ -150,6 +151,19 @@ export default function PromptInput({
     }
   };
 
+  const handleFileInputChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (files) {
+      Array.from(files).forEach((file) => {
+        if (file.type.startsWith('image/')) {
+          addSourceImage(file);
+        }
+      });
+      // Reset input so same file can be re-uploaded
+      e.target.value = '';
+    }
+  };
+
   const isEditing = sourceImages.length > 0;
 
   return (
@@ -170,6 +184,25 @@ export default function PromptInput({
         <div className="flex items-center justify-between">
           <h3 className="text-sm font-medium text-zinc-700 dark:text-zinc-200">Prompt</h3>
           <div className="text-xs text-zinc-400 dark:text-zinc-500">Press / to focus</div>
+          <button
+            type="button"
+            aria-label="Upload image"
+            className="ml-2 p-1 rounded hover:bg-zinc-100 dark:hover:bg-zinc-800 focus:outline-none"
+            style={{ height: 28, width: 28, display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+            onClick={() => fileInputRef.current?.click()}
+          >
+            <svg width="18" height="18" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M2.75 5.75A1.75 1.75 0 0 1 4.5 4h3.172a1.75 1.75 0 0 1 1.237.513l.878.878A1.75 1.75 0 0 0 11.024 6H15.5a1.75 1.75 0 0 1 1.75 1.75v6.5A1.75 1.75 0 0 1 15.5 16h-11A1.75 1.75 0 0 1 2.75 14.25v-8.5z" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+            </svg>
+            <input
+              type="file"
+              accept="image/*"
+              multiple
+              ref={fileInputRef}
+              style={{ display: 'none' }}
+              onChange={handleFileInputChange}
+            />
+          </button>
         </div>
         <Textarea
           ref={textareaRef}
