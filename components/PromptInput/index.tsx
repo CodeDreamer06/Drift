@@ -25,6 +25,9 @@ interface PromptInputProps {
   temperature?: number;
   backgroundSetting?: 'auto' | 'opaque' | 'transparent';
   quantity?: number;
+  moderation?: 'auto' | 'low' | null;
+  outputFormat?: 'png' | 'jpeg' | 'webp' | null;
+  outputCompression?: number | null;
 }
 
 export default function PromptInput({
@@ -41,13 +44,27 @@ export default function PromptInput({
   negativePrompt,
   temperature,
   backgroundSetting,
-  quantity = 1
+  quantity = 1,
+  moderation,
+  outputFormat,
+  outputCompression,
 }: PromptInputProps) {
   const [prompt, setPrompt] = useState("");
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const [isDragging, setIsDragging] = useState(false);
   const [previewUrls, setPreviewUrls] = useState<Record<string, string>>({});
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  // Add state for advanced options
+  const [moderationState, setModeration] = useState<'auto' | 'low' | null>('auto');
+  const [outputFormatState, setOutputFormat] = useState<'png' | 'jpeg' | 'webp' | null>('png');
+  const [outputCompressionState, setOutputCompression] = useState<number | null>(100);
+
+  useEffect(() => {
+    setModeration(moderation ?? 'auto');
+    setOutputFormat(outputFormat ?? 'png');
+    setOutputCompression(outputCompression ?? 100);
+  }, [moderation, outputFormat, outputCompression]);
 
   useEffect(() => {
     const newUrls: Record<string, string> = {};
@@ -103,7 +120,12 @@ export default function PromptInput({
             ? { background: backgroundSetting }
             : {}
         ),
-        ...(quantity && { n: quantity })
+        ...(quantity && { n: quantity }),
+        ...(model === 'gpt-image-1' && {
+          moderation: moderationState,
+          output_format: outputFormatState,
+          output_compression: outputCompressionState
+        })
       });
       setPrompt("");
     } else {
@@ -119,7 +141,12 @@ export default function PromptInput({
           backgroundSetting === 'opaque' || backgroundSetting === 'transparent'
             ? { background: backgroundSetting }
             : {}
-        )
+        ),
+        ...(model === 'gpt-image-1' && {
+          moderation: moderationState,
+          output_format: outputFormatState,
+          output_compression: outputCompressionState
+        })
       });
       setPrompt("");
     }

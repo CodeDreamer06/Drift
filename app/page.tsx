@@ -49,8 +49,10 @@ function Home() {
   // Advanced options state
   const [negativePrompt, setNegativePrompt] = useLocalStorage<string>("negativePrompt", "");
   const [temperature, setTemperature] = useLocalStorage<number>("temperature", 0.7);
-  // Background setting state
   const [backgroundSetting, setBackgroundSetting] = useLocalStorage<'auto' | 'opaque' | 'transparent'>("backgroundSetting", "auto");
+  const [moderation, setModeration] = useLocalStorage<'auto' | 'low' | null>("moderation", 'auto');
+  const [outputFormat, setOutputFormat] = useLocalStorage<'png' | 'jpeg' | 'webp' | null>("outputFormat", 'png');
+  const [outputCompression, setOutputCompression] = useLocalStorage<number | null>("outputCompression", 100);
   
   // API key context
   const { 
@@ -122,6 +124,12 @@ function Home() {
               selectedModel={selectedModel}
               backgroundSetting={backgroundSetting}
               onBackgroundSettingChange={setBackgroundSetting}
+              moderation={moderation}
+              onModerationChange={setModeration}
+              outputFormat={outputFormat}
+              onOutputFormatChange={setOutputFormat}
+              outputCompression={outputCompression}
+              onOutputCompressionChange={setOutputCompression}
             />
             <div className="flex justify-end">
               <KeyboardShortcuts />
