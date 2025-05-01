@@ -121,18 +121,38 @@ export const editImages = async (request: EditRequest): Promise<GenerationRespon
     formData.append("prompt", request.prompt);
     formData.append("model", request.model);
 
+    // Debug: Log file info
+    console.log("[editImages] request.images:", request.images.map(f => ({ name: f.name, type: f.type, size: f.size })));
+    // Debug: Check if any file is empty or not an image
+    request.images.forEach((imageFile, idx) => {
+      if (!imageFile.type.startsWith('image/')) {
+        console.warn(`[editImages] File at index ${idx} is not an image:`, imageFile);
+      }
+      if (imageFile.size === 0) {
+        console.warn(`[editImages] File at index ${idx} is empty:`, imageFile);
+      }
+    });
+
     // Append each image file
     request.images.forEach((imageFile) => {
-      // The key needs to be 'image[]' for the API to recognize multiple files, 
-      // but FormData might handle this automatically or require just 'image'.
-      // Testing with 'image' first, as per some FormData implementations.
-      // If issues arise, try 'image[]'.
       formData.append("image", imageFile);
     });
 
-    // Add background setting ONLY for gpt-image-1
-    if (request.model === "gpt-image-1" && request.background) {
+    // Re-enabled optional fields
+    if (request.background) {
       formData.append("background", request.background);
+    }
+    if (request.apiKey) {
+      formData.append("apiKey", request.apiKey);
+    }
+
+    // Debug: Log FormData entries
+    for (const [key, value] of formData.entries()) {
+      if (value instanceof File) {
+        console.log(`[editImages] FormData: ${key} = File(name=${value.name}, type=${value.type}, size=${value.size})`);
+      } else {
+        console.log(`[editImages] FormData: ${key} = ${value}`);
+      }
     }
 
     // Get API key from request or from localStorage
@@ -151,17 +171,12 @@ export const editImages = async (request: EditRequest): Promise<GenerationRespon
     });
 
     if (!response.ok) {
-      const errorBody = await response.text(); // Read error body for more details
+      const errorBody = await response.text();
       console.error("API Error Body:", errorBody);
       throw new Error(`API error: ${response.status} ${response.statusText}`);
     }
 
     const result: GenerationResponse = await response.json();
-
-    // The useGeneration hook already handles converting b64 to blob URLs,
-    // so we just return the result as is.
-    // We expect the response structure to be similar to GenerationResponse.
-
     return result;
 
   } catch (error) {

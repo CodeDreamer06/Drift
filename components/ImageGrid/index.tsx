@@ -10,6 +10,7 @@ interface ImageGridProps {
   favorites: string[];
   onToggleFavorite: (image: ImageData) => void;
   onDelete: (id: string) => void;
+  addSourceImage: (file: File) => void;
 }
 
 export default function ImageGrid({ 
@@ -17,8 +18,32 @@ export default function ImageGrid({
   favorites,
   onToggleFavorite,
   onDelete,
+  addSourceImage,
 }: ImageGridProps) {
   const [zoomedImage, setZoomedImage] = useState<ImageData | null>(null);
+
+  // Handler to fetch image as File and add to main prompt
+  const handleEdit = async (image: ImageData) => {
+    try {
+      console.log(`[handleEdit] Fetching image: ${image.url}`);
+      const res = await fetch(image.url);
+      if (!res.ok) throw new Error(`Failed to fetch image: ${res.status} ${res.statusText}`);
+      const blob = await res.blob();
+      console.log(`[handleEdit] Blob details: size=${blob.size}, type=${blob.type}`);
+
+      // Standardize to PNG for editing, but use a unique name
+      const fileName = `edit-${image.id}.png`; // Use image ID for uniqueness
+      const fileType = 'image/png';
+      const file = new File([blob], fileName, { type: fileType });
+      console.log(`[handleEdit] Created File: name=${file.name}, type=${file.type}, size=${file.size}`);
+
+      addSourceImage(file);
+      // Optionally, scroll/focus main prompt input here
+    } catch (err) {
+      console.error("[handleEdit] Error processing image for edit:", err);
+      // Optionally toast error: `Failed to prepare image for editing: ${err.message}`
+    }
+  };
 
   return (
     <>
@@ -42,6 +67,7 @@ export default function ImageGrid({
                 onFavorite={onToggleFavorite}
                 onZoom={setZoomedImage}
                 onDelete={onDelete}
+                onEdit={handleEdit}
               />
             </div>
           ))

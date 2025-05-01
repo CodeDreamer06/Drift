@@ -24,6 +24,7 @@ interface PromptInputProps {
   negativePrompt?: string;
   temperature?: number;
   backgroundSetting?: 'auto' | 'opaque' | 'transparent';
+  quantity?: number;
 }
 
 export default function PromptInput({
@@ -39,7 +40,8 @@ export default function PromptInput({
   quality,
   negativePrompt,
   temperature,
-  backgroundSetting
+  backgroundSetting,
+  quantity = 1
 }: PromptInputProps) {
   const [prompt, setPrompt] = useState("");
   const textareaRef = useRef<HTMLTextAreaElement>(null);
@@ -78,35 +80,45 @@ export default function PromptInput({
     return () => document.removeEventListener("keydown", handleKeyDown);
   }, []);
 
-  const handleKeyDown = (e: KeyboardEvent<HTMLTextAreaElement>) => {
+  const handleKeyDown = async (e: KeyboardEvent<HTMLTextAreaElement>) => {
     if ((e.ctrlKey || e.metaKey) && e.key === "Enter" && !isLoading) {
       e.preventDefault();
-      handleSubmit();
+      await handleSubmit();
     }
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     const trimmedPrompt = prompt.trim();
     if (!trimmedPrompt || isLoading) return;
 
     if (sourceImages.length > 0) {
-      edit({ 
+      await edit({ 
         prompt: trimmedPrompt, 
         model, 
         ...(negativePrompt && { negative_prompt: negativePrompt }), 
         ...(temperature !== undefined && { temperature }),
-        ...(backgroundSetting && { background: backgroundSetting })
+        ...(
+          backgroundSetting === 'opaque' || backgroundSetting === 'transparent'
+            ? { background: backgroundSetting }
+            : {}
+        ),
+        ...(quantity && { n: quantity })
       });
+      setPrompt("");
     } else {
-      generate({ 
+      await generate({ 
         prompt: trimmedPrompt, 
         model, 
         size, 
         quality, 
-        n: 1, 
+        n: quantity, 
         negativePrompt: negativePrompt || undefined, 
         temperature,
-        background: backgroundSetting
+        ...(
+          backgroundSetting === 'opaque' || backgroundSetting === 'transparent'
+            ? { background: backgroundSetting }
+            : {}
+        )
       });
       setPrompt("");
     }
@@ -177,13 +189,15 @@ export default function PromptInput({
             <div className="flex flex-wrap gap-2">
               {sourceImages.map((file) => (
                 <div key={file.name} className="relative group w-16 h-16 rounded overflow-hidden border">
-                  <Image 
-                    src={previewUrls[file.name]} 
-                    alt={file.name} 
-                    width={64} 
-                    height={64} 
-                    className="w-full h-full object-cover" 
-                  />
+                  {previewUrls[file.name] && (
+                    <Image 
+                      src={previewUrls[file.name]} 
+                      alt={file.name} 
+                      width={64} 
+                      height={64} 
+                      className="w-full h-full object-cover" 
+                    />
+                  )}
                   <button 
                     onClick={() => removeSourceImage(file.name)}
                     className="absolute top-0 right-0 p-0.5 bg-black/60 text-white rounded-bl opacity-0 group-hover:opacity-100 transition-opacity focus:opacity-100 outline-none"

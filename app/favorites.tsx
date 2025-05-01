@@ -20,6 +20,7 @@ export default function FavoritesPage() {
           favorites={favorites}
           onToggleFavorite={toggleFavorite}
           onDelete={() => {}} // Optionally disable delete in favorites
+          addSourceImage={() => {}} // No-op for favorites page
         />
         {favoriteImages.length === 0 && (
           <div className="text-center text-zinc-500 mt-8">No favorite images yet.</div>

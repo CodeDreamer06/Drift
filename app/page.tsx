@@ -102,6 +102,7 @@ function Home() {
               negativePrompt={negativePrompt}
               temperature={temperature}
               backgroundSetting={backgroundSetting}
+              quantity={quantity}
             />
             <ApiKeySettings />
             <SettingsPanel 
@@ -134,6 +135,7 @@ function Home() {
             favorites={favorites} 
             onToggleFavorite={toggleFavorite}
             onDelete={handleDeleteImage}
+            addSourceImage={addSourceImage}
           />
         </div>
       </main>

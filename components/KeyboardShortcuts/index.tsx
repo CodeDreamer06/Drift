@@ -65,8 +65,8 @@ export default function KeyboardShortcuts() {
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      // Shift + ? to open shortcuts
-      if (e.shiftKey && e.key === "?") {
+      // Ctrl + Shift + ? to open shortcuts (prevents interfering with typing)
+      if ((e.ctrlKey || e.metaKey) && e.shiftKey && e.key === "?") {
         e.preventDefault();
         setIsOpen(true);
       }
@@ -103,7 +103,7 @@ export default function KeyboardShortcuts() {
           </DialogHeader>
           <div className="mt-4 space-y-4">
             <div className="text-xs text-muted-foreground mb-2">
-              Press <span className="font-mono bg-muted px-1 py-0.5 rounded">Shift + ?</span> to open this dialog anytime
+              Press <span className="font-mono bg-muted px-1 py-0.5 rounded">{formatKey("Ctrl + Shift + ?", isMacOS)}</span> to open this dialog anytime
             </div>
             <div className="grid gap-2">
               {shortcuts.map((shortcut) => (

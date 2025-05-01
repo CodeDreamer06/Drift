@@ -23,6 +23,7 @@ interface ImageCardProps {
   isFavorite?: boolean;
   onZoom: (image: ImageData) => void;
   onDelete: (id: string) => void;
+  onEdit: (image: ImageData) => void;
 }
 
 export default function ImageCard({
@@ -31,6 +32,7 @@ export default function ImageCard({
   isFavorite = false,
   onZoom,
   onDelete,
+  onEdit,
 }: ImageCardProps) {
   const [isLoading, setIsLoading] = useState(true);
   const [isHovered, setIsHovered] = useState(false);
@@ -139,6 +141,15 @@ export default function ImageCard({
           onClick={handleCopy}
         >
           <Copy className="h-4 w-4 text-zinc-700 drop-shadow" />
+        </Button>
+        <Button
+          size="icon"
+          variant="secondary"
+          className="h-8 w-8 rounded-full bg-white/30 border border-black/10 shadow-lg backdrop-blur-md hover:bg-white/40 transition-all hover:scale-[0.98] active:scale-95"
+          title="Edit image"
+          onClick={e => { e.stopPropagation(); onEdit(image); }}
+        >
+          <svg className="h-4 w-4 text-zinc-500 drop-shadow" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M16.862 3.487a2.5 2.5 0 1 1 3.535 3.535L7.5 19.92l-4 1 1-4 14.362-14.433z"/></svg>
         </Button>
         <Button
           size="icon"
