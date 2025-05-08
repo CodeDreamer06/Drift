@@ -5,7 +5,7 @@ const nextConfig = {
   images: {
     domains: [
       'oaidalleapiprodscus.blob.core.windows.net',
-      'api.voidai.xyz',
+      'api.voidai.app',
       'replicate.delivery'
     ],
   },

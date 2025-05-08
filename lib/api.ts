@@ -2,8 +2,8 @@ import { ImageQuality, ImageSize } from "@/components/SettingsPanel";
 import { toast } from "sonner";
 
 // Removed hardcoded API key. Key will be injected at runtime from context/localStorage.
-const VOID_AI_API_URL = "https://api.voidai.xyz/v1/images/generations";
-const VOID_AI_EDIT_API_URL = "https://api.voidai.xyz/v1/images/edits";
+const VOID_AI_API_URL = "https://api.voidai.app/v1/images/generations";
+const VOID_AI_EDIT_API_URL = "https://api.voidai.app/v1/images/edits";
 
 export interface GenerationRequest {
   prompt: string;
